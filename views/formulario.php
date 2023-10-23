@@ -12,9 +12,9 @@
     <noscript>
 	    <iframe style="width: 100px; height: 100px; border: 0; position: absolute; top: -5000px;" src="https://maf.pagosonline.net/ws/fp/tags.js?id=d66f949f19b33e88c202b579cfc549b380200"></iframe>
     </noscript>
-    <link rel="stylesheet" href="../css/normalize.css">
-    <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/main.css">    
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/main.css">    
 </head>
 <body>
 <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
@@ -345,9 +345,9 @@
             </div>
         </div>
     </div>
-    <script src="../lib/jquery/dist/jquery.min.js"></script>
-    <script src="../lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../js/main.js"></script>
+    <script src="./lib/jquery/dist/jquery.min.js"></script>
+    <script src="./lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./js/main.js"></script>
 <?php
 if (isset($resultPing) && $resultPing !== null) {
     echo "El resultado del ping es: <pre>" . print_r($resultPing, true) . "</pre>";

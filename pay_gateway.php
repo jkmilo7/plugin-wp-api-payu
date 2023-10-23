@@ -1,153 +1,147 @@
 <?php
-//require_once '../../../../wp-blog-header.php';
-//require_once './../api_payu_payment_gateway.php';
-require_once '../controllers/ApiController.php';
-require_once '../utils/Order.php';
-require_once '../utils/User.php';
-//get_header('shop');
+require_once '../../../wp-blog-header.php';
+require_once './api_payu_payment_gateway.php';
+require_once './controllers/ApiController.php';
+require_once './utils/Order.php';
+require_once './utils/User.php';
+get_header('shop');
 
 if(isset($_POST['merchantId'])){
 	$merchantId = $_POST['merchantId'];
 } else {
-	$merchantId = $_POST['comercio_id'];
+	$merchantId = '508029';
 }
 
 if(isset($_POST['referenceCode'])){
 	$referenceCode = $_POST['referenceCode'];
 } else {
-	$referenceCode = $_POST['codigo_referencia'];
+	$referenceCode = 'referenceCode';
 }
 
 if(isset($_POST['description'])){
 	$referenceCode = $_POST['description'];
 } else {
-	$referenceCode = $_POST['descripcion'];
+	$referenceCode = 'descripcion';
 }
 
 if(isset($_POST['amount'])){
 	$amount = $_POST['amount'];
 } else {
-	$amount = $_POST['monto'];
+	$amount = '99000';
 }
 
 if(isset($_POST['tax'])){
 	$tax = $_POST['tax'];
 } else {
-	$tax = $_POST['iva'];
+	$tax = '0';
 }
 
 if(isset($_POST['taxReturnBase'])){
 	$taxReturnBase = $_POST['taxReturnBase'];
 } else {
-	$taxReturnBase = $_POST['ivaBase'];
-}
-
-if(isset($_POST['signature'])){
-	$signature = $_POST['signature'];
-} else {
-	$signature = $_POST['firma'];
+	$taxReturnBase = '';
 }
 
 if(isset($_POST['accountId'])){
 	$accountId = $_POST['accountId'];
 } else {
-	$accountId = $_POST['cuenta_id'];
+	$accountId = '512321';
 }
 
 if(isset($_POST['currency'])){
 	$currency = $_POST['currency'];
 } else {
-	$currency = $_POST['moneda'];
+	$currency = 'COP';
 }
 
 if(isset($_POST['buyerEmail'])){
 	$buyerEmail = $_POST['buyerEmail'];
 } else {
-	$buyerEmail = $_POST['correo_comprador'];
+	$buyerEmail = 'user@tests.com';
 }
 
 if(isset($_POST['language'])){
 	$language = $_POST['language'];
 } else {
-	$language = $_POST['idioma'];
+	$language = 'es';
 }
 
 if(isset($_POST['environment'])){
 	$environment = $_POST['environment'];
 } else {
-	$environment = $_POST['ambiente'];
+	$environment = 'development';
 }
 
 if(isset($_POST['test'])){
 	$test = $_POST['test'];
 } else {
-	$test = $_POST['prueba'];
+	$test = 'true';
 }
 
 if(isset($_POST['confirmationUrl'])){
 	$confirmationUrl = $_POST['confirmationUrl'];
 } else {
-	$confirmationUrl = $_POST['url_confirmacion'];
+	$confirmationUrl = 'https://www.espacolaser.com.co/wp-content/plugins/woocommerce-intregrate-with-api-payu/confirmation.php';
 }
 
 if(isset($_POST['responseUrl'])){
 	$responseUrl = $_POST['responseUrl'];
 } else {
-	$responseUrl = $_POST['url_respuesta'];
+	$responseUrl = 'https://www.espacolaser.com.co/wp-content/plugins/woocommerce-intregrate-with-api-payu/response.php';;
 }
 
 if(isset($_POST['shippingAddress'])){
 	$shippingAddress = $_POST['shippingAddress'];
 } else {
-	$shippingAddress = $_POST['direccion_envio'];
+	$shippingAddress = 'Cr 23 No. 53-50';
 }
 
 if(isset($_POST['shippingCountry'])){
 	$shippingCountry = $_POST['shippingCountry'];
 } else {
-	$shippingCountry = $_POST['pais_envio'];
+	$shippingCountry = 'CO';
 }
 
 if(isset($_POST['shippingCity'])){
 	$shippingCity = $_POST['shippingCity'];
 } else {
-	$shippingCity = $_POST['ciudad_envio'];
+	$shippingCity = 'Bogotá';
 }
 
 if(isset($_POST['billingAddress'])){
 	$billingAddress = $_POST['billingAddress'];
 } else {
-	$billingAddress = $_POST['direccion_factura'];
+	$billingAddress = 'Cr 23 No. 53-50';
 }
 
 if(isset($_POST['billingCountry'])){
 	$billingCountry = $_POST['billingCountry'];
 } else {
-	$billingCountry = $_POST['pais_factura'];
+	$billingCountry = 'CO';
 }
 
 if(isset($_POST['billingCity'])){
 	$billingCity = $_POST['billingCity'];
 } else {
-	$billingCity = $_POST['ciudad_factura'];
+	$billingCity = 'Bogotá';
 }
 
-if($shippingCity==='')
-{
-    $shippingCountry = 'CO';
+//Obtenemos el apiKey y el ApiLogin
+$payu = new WC_Api_Payu_Payment_Gateway;
+$apiKey = $payu->get_api_key();
+$apiLogin = $payu->get_api_login();
+
+if(isset($_POST['signature'])){
+	$signature = $_POST['signature'];
+} else {
+	$signature = md5($apiKey . "~" . $merchantId . "~" . $referenceCode . "~" . $amount . "~" . $currency);
 }
-$apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
-$apiLogin = 'pRRXKOl8ikMmt9u';
 
-// //Obtenemos el apiKey y el ApiLogin
-// $payu = new WC_Api_Payu_Payment_Gateway;
-// $apiKey = $payu->get_api_key();
-// $apiLogin = $payu->get_api_login();
 
-// $apiModel = new ApiModel('');
-// $apiController = new ApiController($apiModel, $apiLogin, $apiKey, $accountId, $merchantId, $shippingCountry, $language, $test, $currency);
+$apiModel = new ApiModel('');
+$apiController = new ApiController($apiModel, $apiLogin, $apiKey, $accountId, $merchantId, $shippingCountry, $language, $test, $currency);
 
-// $apiController->setEnvironment($environment);
+$apiController->setEnvironment($environment);
 
 // if ($_SERVER['REQUEST_METHOD'] === 'POST')
 // {
@@ -354,27 +348,27 @@ $apiLogin = 'pRRXKOl8ikMmt9u';
 // }
 // else
 // {
-    // //get list bank PSE
-    // $resultBankList = null;
-    // $resultBankList = json_decode($apiController->getBankListAPI('PSE', $shippingCountry), true);
+    //get list bank PSE
+    $resultBankList = null;
+    $resultBankList = json_decode($apiController->getBankListAPI('PSE', $shippingCountry), true);
 
-    // if ($resultBankList['code'] === 'SUCCESS') {
-    //     $banksInfo = array_map(function($bank) {
-    //         return array(
-    //             'description' => $bank['description'],
-    //             'pseCode' => $bank['pseCode']
-    //         );
-    //     }, $resultBankList['banks']);
+    if ($resultBankList['code'] === 'SUCCESS') {
+        $banksInfo = array_map(function($bank) {
+            return array(
+                'description' => $bank['description'],
+                'pseCode' => $bank['pseCode']
+            );
+        }, $resultBankList['banks']);
         
-    // } else {
-    //     echo "Error al obtener la lista de bancos";
-    // }
+    } else {
+        echo "Error al obtener la lista de bancos";
+    }
 
-    // $resultPing = null;
-    // $resultPing = $apiController->pingAPI();  
+    $resultPing = null;
+    $resultPing = $apiController->pingAPI();  
 
-    // $resultPaymentMethods = null;
-    // $resultPaymentMethods = $apiController->getPaymentMethodsAPI();
+    $resultPaymentMethods = null;
+    $resultPaymentMethods = $apiController->getPaymentMethodsAPI();
 
     //return years
     $currentYear = date('Y');
@@ -416,4 +410,5 @@ $apiLogin = 'pRRXKOl8ikMmt9u';
 //     ]);
 // }
 
-// ?>
+get_footer('shop');
+?>

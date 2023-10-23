@@ -32,9 +32,11 @@ function woocommerce_payu_latam_gateway_integration() {
 			$this->merchant_id = $this->settings['merchant_id'];
 			$this->account_id = $this->settings['account_id'];
 			$this->api_key = $this->settings['api_key'];
-			$this->api_login = $this->settings['api_login'];			
+			$this->api_login = $this->settings['api_login'];
+			$this->language = $this->settings['language'];
 			$this->gateway_url = $this->settings['gateway_url'];
 			$this->test = $this->settings['test'];
+			$this->environment = $this->settings['environment'];			
 			$this->response_page = $this->settings['response_page'];
 			$this->confirmation_page = $this->settings['confirmation_page'];
 			
@@ -43,7 +45,7 @@ function woocommerce_payu_latam_gateway_integration() {
              } else {
                 add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
             }
-			//add_action('woocommerce_receipt_payulatam', array(&$this, 'receipt_page'));
+			add_action('woocommerce_receipt_payulatam', array(&$this, 'receipt_page'));
 		}
 		
 		/**
@@ -80,16 +82,27 @@ function woocommerce_payu_latam_gateway_integration() {
 				'api_login' => array(
 					'title' => __('API Login', 'payu_latam'),
 					'type' => 'text',
-					'description' => __('Llave que sirve para comunicacion con PayU Latam.', 'payu_latam')),
+					'description' => __('Llave que sirve para comunicacion con PayU Latam.', 'payu_latam')),				
+				'language' => array(
+					'title' => __('Language', 'payu_latam'),
+					'type' => 'text',
+					'description' => __('Lenguaje del pago.', 'payu_latam'),
+					'default' => __('es', 'payu_latam')),
                 'gateway_url' => array(
                     'title' => __('Gateway URL', 'payu_latam'),
                     'type' => 'text',
-                    'description' => __('URL de la pasarela de pago PayU Latam.', 'payu_latam')),
+					'description' => __('URL de la página que tiene llas opciones para los pagos. No olvide cambiar su dominio.', 'payu_latam'),
+					'default' => __('http://su.dominio.com/wp-content/plugins/woocommerce-intregrate-with-api-payu/admin/pay_gateway.php', 'payu_latam')),
 				'test' => array(
                     'title' => __('Transacciones en modo de prueba', 'payu_latam'),
                     'type' => 'checkbox',
                     'label' => __('Habilita las transacciones en modo de prueba.', 'payu_latam'),
                     'default' => 'no'),
+				'environment' => array(
+					'title' => __('Ambiente donde se ejecutra las transacciones', 'payu_latam'),
+					'type' => 'text',
+					'label' => __('Permite generar peticiones  amabiente de desarrollo o produccion (development o production).', 'payu_latam'),
+					'default' => 'development'),
                 'response_page' => array(
                     'title' => __('Página de respuesta'),
                     'type' => 'text',
@@ -104,7 +117,7 @@ function woocommerce_payu_latam_gateway_integration() {
 		}
 		
 		/**
-         * Muestra el fomrulario en el admin con los campos de configuracion del gateway PayU Latam
+         * Muestra el formulario en el admin con los campos de configuracion del gateway PayU Latam
 		 * 
 		 * @access public
          * @return void
@@ -168,7 +181,9 @@ function woocommerce_payu_latam_gateway_integration() {
 				'accountId' => $this->account_id,
 				'currency' => $currency,
 				'buyerEmail' => $order -> billing_email,
+				'language' => $this->language,				
 				'test' => $test,
+				'environment' => $this->environment,
 				'confirmationUrl' => $this->confirmation_page,
 				'responseUrl' => $this->response_page,
 				'shippingAddress' => $order->shipping_address_1,
@@ -242,6 +257,14 @@ function woocommerce_payu_latam_gateway_integration() {
 		function get_api_key() {
 			return $this->settings['api_key'];
 		}
+
+		/**
+		 * Retorna la configuracion del api key
+		 */
+		function get_api_login() {
+			return $this->settings['api_login'];
+		}
+		
 	}
 
 	/**

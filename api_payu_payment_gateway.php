@@ -123,7 +123,7 @@ function woocommerce_payu_latam_gateway_integration() {
          * @return void
          */
         public function admin_options() {
-			echo '<h3>'.__('PayU Latam Payment Gateway', 'payu_latam').'</h3>';
+			echo '<h3>'.__('PayU API Latam Payment Gateway', 'payu_latam').'</h3>';
 			echo '<table class="form-table">';
 			$this -> generate_settings_html();
 			echo '</table>';

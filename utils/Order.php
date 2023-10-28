@@ -5,7 +5,9 @@ class Order {
     private $transaction_id;
     private $reference;
     private $description;
-    private $value;
+    private $amount;
+    private $tax;
+    private $taxReturnBase;
     private $user_id;
 
     public function __construct($data) {
@@ -13,7 +15,9 @@ class Order {
         $this->transaction_id = $data['transaction_id'];
         $this->reference = $data['reference'];
         $this->description = $data['description'];
-        $this->value = $data['value'];
+        $this->amount = $data['amount'];
+        $this->tax = $data['tax'];
+        $this->taxReturnBase = $data['taxReturnBase'];
         $this->user_id = $data['user_id'];
     }
 
@@ -34,8 +38,16 @@ class Order {
         return $this->description;
     }
 
-    public function getValue() {
-        return $this->value;
+    public function getAmount() {
+        return $this->amount;
+    }
+
+    public function getTax() {
+        return $this->tax;
+    }
+
+    public function getTaxReturnBase() {
+        return $this->taxReturnBase;
     }
 
     public function getUserId() {

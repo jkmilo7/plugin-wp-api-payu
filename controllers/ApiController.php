@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../models/ApiModel.php';
 require_once __DIR__ . '/../utils/Environment.php';
 require_once __DIR__ . '/../utils/Order.php';
-require_once __DIR__ . '/../utils/User.php';
 
 class ApiController {
     private $apiModel;
@@ -107,13 +106,10 @@ class ApiController {
         }
     }
 
-    public function setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $paymentMethod, $user, $order, $session, $ip, $userAgent) 
+    public function setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $paymentMethod, $order, $signature, $session, $ip, $userAgent) 
     {
         try {
 
-            $fechaYHora = date('Y-m-d\TH:i:s.v\Z');
-            $signature = md5($this->apiKey . "~" . $this->merchantId . "~" . $order->getReference() . $fechaYHora . "~" . $order->getValue() . "~" . $this->currency);
-    
             $data = array(
                 'language' => $this->language,
                 'command' => 'SUBMIT_TRANSACTION',
@@ -124,38 +120,38 @@ class ApiController {
                 'transaction' => array(
                     'order' => array(
                         'accountId'=> $this->accountId,
-                        'referenceCode' => $order->getReference() . $fechaYHora,
+                        'referenceCode' => $order->getReference(),
                         'description' => $order->getDescription(),
                         'language' => $this->language,
                         'signature' => $signature,
                         //'notifyUrl' => 'http://www.payu.com/notify',
                         'additionalValues' => array(
                             'TX_VALUE' => array(
-                                'value' => $order->getValue(),
+                                'value' => $order->getAmount(),
                                 'currency' => $this->currency
                             ),
-                            // 'TX_TAX' => array(
-                            //     'value' => '10378',
-                            //     'currency' => $this->currency
-                            // ),
-                            // 'TX_TAX_RETURN_BASE' => array(
-                            //     'value' => '54622',
-                            //     'currency' => $this->currency
-                            // )                                           
+                            'TX_TAX' => array(
+                                'value' => $order->getTax(),
+                                'currency' => $this->currency
+                            ),
+                            'TX_TAX_RETURN_BASE' => array(
+                                'value' => $order->getTaxReturnBase(),
+                                'currency' => $this->currency
+                            )                        
                         ),
                         'buyer' => array(
                             'merchantBuyerId' => $order->getUserId(),
                             'fullName' => $payerName,
-                            'emailAddress' => $user->getEmail(),
+                            'emailAddress' => $buyerEmail,
                             'contactPhone' => $cellPhone,
                             'dniNumber' => $documentNumber,
                             'shippingAddress' => array(
-                                'street1' => $user->getStreet1(),
-                                'street2' => $user->getStreet2(),
-                                'city' => $user->getCity(),
-                                'state' => $user->getState(),
-                                'country' => $country,
-                                'postalCode' => $user->getPostalCode(),
+                                'street1' => $shippingAddress,
+                                'street2' => '',
+                                'city' => $shippingCity,
+                                'state' => '',
+                                'country' => $shippingCountry,
+                                'postalCode' => '00000',
                                 'phone' => $cellPhone
                             )
                         )
@@ -163,16 +159,16 @@ class ApiController {
                     'payer' => array(
                         'merchantPayerId' => $order->getUserId(),
                         'fullName' => $payerName,
-                        'emailAddress' => $user->getEmail(),
+                        'emailAddress' => $buyerEmail,
                         'contactPhone' => $cellPhone,
                         'dniNumber' => $documentNumber,
                         'billingAddress' => array(
-                            'street1' => $user->getStreet1(),
-                            'street2' => $user->getStreet2(),
-                            'city' => $user->getCity(),
-                            'state' => $user->getState(),
-                            'country' => $country,
-                            'postalCode' => $user->getPostalCode(),
+                            'street1' => $billingAddress,
+                            'street2' => '',
+                            'city' => $billingCity,
+                            'state' => '',
+                            'country' => $billingCountry,
+                            'postalCode' => '00000',
                             'phone' => $cellPhone
                         )
                     ),
@@ -212,13 +208,10 @@ class ApiController {
         }
     }
 
-    public function setPSEPaymentAPI($bank, $payerName, $typePerson, $typeDocument, $documentNumber, $cellPhone, $user, $order, $session, $ip, $userAgent) 
+    public function setPSEPaymentAPI($bank, $payerName, $typePerson, $typeDocument, $documentNumber, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent) 
     {
         try {
-
-            $fechaYHora = date('Y-m-d\TH:i:s.v\Z');
-            $signature = md5($this->apiKey . "~" . $this->merchantId . "~" . $order->getReference() . $fechaYHora . "~" . $order->getValue() . "~" . $this->currency);
-        
+                   
             $data = array(
                 'language' => $this->language,
                 'command' => 'SUBMIT_TRANSACTION',
@@ -229,38 +222,38 @@ class ApiController {
                 'transaction' => array(
                     'order' => array(
                         'accountId'=> $this->accountId,
-                        'referenceCode' => $order->getReference() . $fechaYHora,
+                        'referenceCode' => $order->getReference(),
                         'description' => $order->getDescription(),
                         'language' => $this->language,
                         'signature' => $signature,
                         //'notifyUrl' => 'http://www.payu.com/notify',
                         'additionalValues' => array(
                             'TX_VALUE' => array(
-                                'value' => $order->getValue(),
+                                'value' => $order->getAmount(),
                                 'currency' => $this->currency
                             ),
-                            // 'TX_TAX' => array(
-                            //     'value' => '10378',
-                            //     'currency' => $this->currency
-                            // ),
-                            // 'TX_TAX_RETURN_BASE' => array(
-                            //     'value' => '54622',
-                            //     'currency' => $this->currency
-                            // )                                           
+                            'TX_TAX' => array(
+                                'value' => $order->getTax(),
+                                'currency' => $this->currency
+                            ),
+                            'TX_TAX_RETURN_BASE' => array(
+                                'value' => $order->getTaxReturnBase(),
+                                'currency' => $this->currency
+                            )
                         ),
                         'buyer' => array(
                             'merchantBuyerId' => $order->getUserId(),
                             'fullName' => $payerName,
-                            'emailAddress' => $user->getEmail(),
+                            'emailAddress' => $buyerEmail,
                             'contactPhone' => $cellPhone,
                             'dniNumber' => $documentNumber,
                             'shippingAddress' => array(
-                                'street1' => $user->getStreet1(),
-                                'street2' => $user->getStreet2(),
-                                'city' => $user->getCity(),
-                                'state' => $user->getState(),
-                                'country' =>  $this->country,
-                                'postalCode' => $user->getPostalCode(),
+                                'street1' => $shippingAddress,
+                                'street2' => '',
+                                'city' => $shippingCity,
+                                'state' => '',
+                                'country' => $shippingCountry,
+                                'postalCode' => '00000',
                                 'phone' => $cellPhone
                             )
                         )
@@ -268,21 +261,21 @@ class ApiController {
                     'payer' => array(
                         'merchantPayerId' => $order->getUserId(),
                         'fullName' => $payerName,
-                        'emailAddress' => $user->getEmail(),
+                        'emailAddress' => $buyerEmail,
                         'contactPhone' => $cellPhone,
                         'dniNumber' => $documentNumber,
                         'billingAddress' => array(
-                            'street1' => $user->getStreet1(),
-                            'street2' => $user->getStreet2(),
-                            'city' => $user->getCity(),
-                            'state' => $user->getState(),
-                            'country' =>  $this->country,
-                            'postalCode' => $user->getPostalCode(),
+                            'street1' => $billingAddress,
+                            'street2' => '',
+                            'city' => $billingCity,
+                            'state' => '',
+                            'country' => $billingCountry,
+                            'postalCode' => '00000',
                             'phone' => $cellPhone
                         )
                     ),                    
                     'extraParameters' => array(
-                        'RESPONSE_URL' => 'https://www.espacolaser.com.co/checkout',
+                        'RESPONSE_URL' => 'http://localhost:65357/response',
                         'PSE_REFERENCE1' => $ip,
                         'FINANCIAL_INSTITUTION_CODE' => ( $this->test === 'true') ? '1022' : $bank,
                         'USER_TYPE' => $typePerson,
@@ -295,7 +288,7 @@ class ApiController {
                     'deviceSessionId' => $session,
                     'ipAddress' => $ip,
                     'cookie' => "cookie_ed_" . time(),
-                    'userAgent' => $userAgent                    
+                    'userAgent' => $userAgent
                 ),
                 'test' => $this->test
             );
@@ -309,13 +302,10 @@ class ApiController {
         }
     }
 
-    public function setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $user, $order, $session, $ip, $userAgent) 
+    public function setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent) 
     {
         try {
 
-            $fechaYHora = date('Y-m-d\TH:i:s.v\Z');
-            $signature = md5($this->apiKey . "~" . $this->merchantId . "~" . $order->getReference() . $fechaYHora . "~" . $order->getValue() . "~" . $this->currency);
-    
             $data = array(
                 'language' => $this->language,
                 'command' => 'SUBMIT_TRANSACTION',
@@ -326,56 +316,56 @@ class ApiController {
                 'transaction' => array(
                     'order' => array(
                         'accountId'=> $this->accountId,
-                        'referenceCode' => $order->getReference() . $fechaYHora,
+                        'referenceCode' => $order->getReference(),
                         'description' => $order->getDescription(),
                         'language' => $this->language,
                         'signature' => $signature,
-                        'notifyUrl' => 'http://localhost:52975/',
+                        //'notifyUrl' => 'http://localhost:52975/',
                         'additionalValues' => array(
                             'TX_VALUE' => array(
-                                'value' => $order->getValue(),
+                                'value' => $order->getAmount(),
                                 'currency' => $this->currency
                             ),
-                            // 'TX_TAX' => array(
-                            //     'value' => '10378',
-                            //     'currency' => $this->currency
-                            // ),
-                            // 'TX_TAX_RETURN_BASE' => array(
-                            //     'value' => '54622',
-                            //     'currency' => $this->currency
-                            // )                                           
+                            'TX_TAX' => array(
+                                'value' => $order->getTax(),
+                                'currency' => $this->currency
+                            ),
+                            'TX_TAX_RETURN_BASE' => array(
+                                'value' => $order->getTaxReturnBase(),
+                                'currency' => $this->currency
+                            )
                         ),
                         'buyer' => array(
                             'merchantBuyerId' => $order->getUserId(),
                             'fullName' => $payerName,
-                            'emailAddress' => $user->getEmail(),
-                            'contactPhone' => $user->getCellPhone(),
+                            'emailAddress' => $buyerEmail,
+                            'contactPhone' => $cellPhone,
                             'dniNumber' => $documentNumber,
                             'shippingAddress' => array(
-                                'street1' => $user->getStreet1(),
-                                'street2' => $user->getStreet2(),
-                                'city' => $user->getCity(),
-                                'state' => $user->getState(),
-                                'country' =>  $this->country,
-                                'postalCode' => $user->getPostalCode(),
-                                'phone' => $user->getCellPhone(),
+                                'street1' => $shippingAddress,
+                                'street2' => '',
+                                'city' => $shippingCity,
+                                'state' => '',
+                                'country' => $shippingCountry,
+                                'postalCode' => '00000',
+                                'phone' => $cellPhone
                             )
                         )
                     ),
                     'payer' => array(
                         'merchantPayerId' => $order->getUserId(),
                         'fullName' => $payerName,
-                        'emailAddress' => $user->getEmail(),
-                        'contactPhone' => $user->getCellPhone(),
+                        'emailAddress' => $buyerEmail,
+                        'contactPhone' => $cellPhone,
                         'dniNumber' => $documentNumber,
                         'billingAddress' => array(
-                            'street1' => $user->getStreet1(),
-                            'street2' => $user->getStreet2(),
-                            'city' => $user->getCity(),
-                            'state' => $user->getState(),
-                            'country' =>  $this->country,
-                            'postalCode' => $user->getPostalCode(),
-                            'phone' => $user->getCellPhone(),
+                            'street1' => $billingAddress,
+                            'street2' => '',
+                            'city' => $billingCity,
+                            'state' => '',
+                            'country' => $billingCountry,
+                            'postalCode' => '00000',
+                            'phone' => $cellPhone
                         )
                     ),
                     'type' => 'AUTHORIZATION_AND_CAPTURE',
@@ -390,6 +380,7 @@ class ApiController {
             $result = $this->apiModel->requestAPI($data, 'payments'); // Usa 'payments' para getPaymentMethodsAPI        
 
             return $result;
+
         } catch (Exception $e) {
             // Manejar la excepción aquí
             return "Error: " . $e->getMessage();

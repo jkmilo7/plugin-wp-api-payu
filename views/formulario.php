@@ -349,12 +349,12 @@
     <script src="./lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./js/main.js"></script>
 <?php
-if (isset($resultPing) && $resultPing !== null) {
-    echo "El resultado del ping es: <pre>" . print_r($resultPing, true) . "</pre>";
-}
-if (isset($resultPaymentMethods) && $resultPaymentMethods !== null) {
-    echo "El resultado del PaymentMethods es: <pre>" . print_r($resultPaymentMethods, true) . "</pre>";
-}
+// if (isset($resultPing) && $resultPing !== null) {
+//     echo "El resultado del ping es: <pre>" . print_r($resultPing, true) . "</pre>";
+// }
+// if (isset($resultPaymentMethods) && $resultPaymentMethods !== null) {
+//     echo "El resultado del PaymentMethods es: <pre>" . print_r($resultPaymentMethods, true) . "</pre>";
+// }
 ?>
 </body>
 </html>

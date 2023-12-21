@@ -1,0 +1,75 @@
+.container{
+    background-color: #fafafa;
+}
+ .payment-column{
+    background-color: rgb(231, 231, 231);
+ }
+
+ .img-card{
+    width: 10%;
+    margin-top: 10px;
+
+ }
+
+ .img-card-inner{
+    width: 15%;
+ }
+
+ .img-card-bank{
+    width: 15%;
+ }
+ .flag-icon {
+    width: 2em;
+    margin-right: 5px;
+ }
+
+ .inline-label {
+    display: inline-block;
+    width: 150px; 
+    margin-right: 15px;
+  }
+
+  .custom-bg {
+    background-color: #fcfcfc; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+  }
+
+  .banner-pay {
+    background-color: #003882; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+
+  }
+  .banner{
+    color: #fcfcfc;
+    align-items: center;
+  }
+
+.data-title{
+    background-color: #2149A9;
+    padding: 10px 10px 8px 10px; 
+    margin: 20px 0px 30px 0px ;
+    color: white;
+}
+
+.data h4{
+    font-size: 20px;
+    margin: 10px 15px 10px 10px;
+}
+.valor{
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.summary-title{
+    background-color: #2149A9;
+    padding: 10px 10px 8px 10px; 
+    margin: 20px 0px 30px 0px ;
+    color: white;
+
+}
+
+.valor{
+    padding-left: 20px;
+}

@@ -3,7 +3,7 @@
 require_once './api_payu_payment_gateway.php';
 require_once './controllers/ApiController.php';
 require_once './utils/Order.php';
-get_header('shop');
+//get_header('shop');
 
 if(isset($_POST['merchantId'])){
 	$merchantId = $_POST['merchantId'];
@@ -14,7 +14,7 @@ if(isset($_POST['merchantId'])){
 if(isset($_POST['referenceCode'])){
 	$referenceCode = $_POST['referenceCode'];
 } else {
-	$referenceCode = '8791';
+	$referenceCode = '8807';
 }
 
 if(isset($_POST['description'])){
@@ -127,20 +127,29 @@ if(isset($_POST['billingCity'])){
 	$billingCity = 'bogota';
 }
 
+if(isset($_POST['cellPhone'])){
+	$cellPhone = $_POST['cellPhone'];
+} else {
+	$cellPhone = '3202701111';
+}
+
 
 //Obtenemos el apiKey y el ApiLogin
- $payu = new WC_Api_Payu_Payment_Gateway;
- $apiKey = $payu->get_api_key();
- $apiLogin = $payu->get_api_login();
+// $payu = new WC_Api_Payu_Payment_Gateway;
+//  $apiKey = $payu->get_api_key();
+//  $apiLogin = $payu->get_api_login();
 
-//$apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
-//$apiLogin = 'pRRXKOl8ikMmt9u';
+$apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
+$apiLogin = 'pRRXKOl8ikMmt9u';
 
 if(isset($_POST['signature'])){
 	$signature = $_POST['signature'];
 } else {
 	$signature = md5($apiKey . "~" . $merchantId . "~" . $referenceCode . "~" . $amount . "~" . $currency);
 }
+
+// Formatea el valor como moneda
+$formattedAmount = number_format($amount, 2, ',', '.');
 
 $apiModel = new ApiModel('');
 $apiController = new ApiController($apiModel, $apiLogin, $apiKey, $accountId, $merchantId, $billingCountry, $language, $test, $currency);
@@ -171,18 +180,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             case '/pay_gateway.php/creditcard-payment':
                         
                 // Recupera los datos del formulario
-                $payerName = $_POST['payer_name'];
-                $typeDocument = $_POST['type_document'];
-                $documentNumber = $_POST['document_number'];
+                $payerName = $_POST['creditcard_payer_name'];
+                $typeDocument = $_POST['creditcard_type_document'];
+                $documentNumber = $_POST['creditcard_document_number'];
                 $creditCardNumber = $_POST['credit_card_number'];
                 $cvv = $_POST['cvv'];
                 $monthExp = $_POST['month_exp'];
                 $yearExp = $_POST['year_exp'];
                 $fees = $_POST['fees'];
-                $cellPhone = $_POST['cell-phone'];
-                $paymentMethod = $_POST['payment_method'];
+                $cellPhone = $_POST['creditcard_cell_phone'];
+                $paymentMethod = $_POST['creditcard_payment_method'];
                 
-                $response_api = json_decode($apiController->setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $paymentMethod, $order, $signature, $session, $ip, $userAgent), true);
+                $response_api = json_decode($apiController->setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $paymentMethod, $order, $signature, $session, $ip, $userAgent, $shippingCountry), true);
                 
 				// Redireccionar a response.php con los datos de la transacción
 				//header('Location: ' . $responseUrl. '?merchantId=508029&transactionId=&transactionState=6&polResponseCode=4&reference_pol=&referenceCode=8757&pseBank=&cus=&TX_VALUE=9900.00&currency=COP&description=%20Promoción%20Paquete%20Depilación%20Láser%20Áxilas%20Para%20Mujer&lapPaymentMethod=VISA&signature=0a81a36ef18f9b51b83aa613e3c31108&mensaje=Ya%20seproceso%20la%20peticion');
@@ -219,12 +228,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             case '/pay_gateway.php/pse-payment':
                         
                 // Recupera los datos del formulario
-                $bank = $_POST['bank'];
-                $payerName = $_POST['payer_name'];
-                $typePerson = $_POST['type_person'];
-                $typeDocument = $_POST['type_document'];
-                $documentNumber = $_POST['document_number'];
-                $cellPhone = $_POST['cell-phone'];
+                $bank = $_POST['pse_bank'];
+                $payerName = $_POST['pse_payer_name'];
+                $typePerson = $_POST['pse_type_person'];
+                $typeDocument = $_POST['pse_type_document'];
+                $documentNumber = $_POST['pse_document_number'];
+                $cellPhone = $_POST['pse_cell_phone'];
                                 
                 $response_api = json_decode($apiController->setPSEPaymentAPI($bank, $payerName, $typePerson, $typeDocument, $documentNumber, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent), true);
                 
@@ -250,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                     } else { 
                         $response = [
                             'status' => 'error',
-                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode']
+                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode'] . " / " . $response_api['transactionResponse']['paymentNetworkResponseErrorMessage'] 
                         ];  
                     }
                 } else {                    
@@ -262,9 +271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             case '/pay_gateway.php/cash-payment':
                 
                 // Recupera los datos del formulario                
-                $payerName = $_POST['payer_name'];                
-                $typeDocument = $_POST['type_document'];
-                $documentNumber = $_POST['document_number'];
+                $payerName = $_POST['cash_payer_name'];                
+                $typeDocument = $_POST['cash_type_document'];
+                $documentNumber = $_POST['cash_document_number'];
                 $paymentMethod = $_POST['payment_method_cash'];
                 
                 //validamos rango de pagos
@@ -274,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                         $response = [
                             'status' =>  'error',
                             'message' => 'Rangos no permitidos para el pago por Efecty.'
-                        ];
+                        ];                        
                         break;
                     }
                 }
@@ -284,14 +293,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                         $response = [
                             'status' =>  'error',
                             'message' => 'Rangos no permitidos para pagos en efectivo.'
-                        ];
+                        ];                        
                         break;
                     }
                 }                
 
-                $response_api = json_decode($apiController->setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent), true);
+                $response_api = json_decode($apiController->setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent, $cellPhone), true);
                 
-                if ($response_api['code'] === "SUCCESS") {
+                if ($response_api['code'] === "SUCCESS") {                    
                     if ($response_api['transactionResponse']['state'] === "APPROVED") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
@@ -300,6 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                             'status' =>  'ok',
                             'message' => 'APPROVED'
                         ];
+
                     } else if ($response_api['transactionResponse']['state'] === "PENDING") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
@@ -309,30 +319,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                             'status' => 'ok',
                             'message' => 'PENDING ',
                             'url' => $response_api['transactionResponse']['extraParameters']['URL_PAYMENT_RECEIPT_HTML']
-                        ];  
+                        ]; 
                     } else {
                         $response = [
                             'status' => 'error',
                             'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode']
-                        ];  
+                        ];                        
                     }
                 } else {                    
                     $response["status"] = "error";
                     $response["message"] = $response_api['error'];
+                    
                 }
 
             break;
             case '/pay_gateway.php/banks-payment':
                 
                 // Recupera los datos del formulario                
-                $payerName = $_POST['payer_name'];                
-                $typeDocument = $_POST['type_document'];
-                $documentNumber = $_POST['document_number'];
+                $payerName = $_POST['bank_payer_name'];                
+                $typeDocument = $_POST['bank_type_document'];
+                $documentNumber = $_POST['bank_document_number'];
                 $paymentMethod = $_POST['payment_method_banks'];
    
-                $response_api = json_decode($apiController->setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent), true);
+                $response_api = json_decode($apiController->setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent, $cellPhone), true);
 
                 if ($response_api['code'] === "SUCCESS") {
+                    
                     if ($response_api['transactionResponse']['state'] === "APPROVED") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
@@ -341,6 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                             'status' =>  'ok',
                             'message' => 'APPROVED'
                         ];
+                        
                     } else if ($response_api['transactionResponse']['state'] === "PENDING") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
@@ -351,26 +364,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                             'message' => 'PENDING ',
                             'url' => $response_api['transactionResponse']['extraParameters']['URL_PAYMENT_RECEIPT_HTML']
                         ];  
+                        
                     } else {
                         $response = [
                             'status' => 'error',
                             'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode']
                         ];  
+                        
                     }
                 } else {                    
                     $response["status"] = "error";
-                    $response["message"] = $response_api['error'];
+                    $response["message"] = $response_api['error'];                    
                 }               
                 
             break;
         }
+
+        echo json_encode($response);
+
     } catch (Exception $exc) {
         $response = [
             'status' => 'error',
             'message' => $exc->getMessage()
         ];
+
+        // Imprime la respuesta JSON para AJAX
+        echo json_encode($response);
     }
-    echo json_encode($response);
+    exit;
 }
 
     //get list bank PSE
@@ -406,5 +427,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     // Incluir la vista
     require_once 'views/formulario.php';
 
-get_footer('shop');
+//get_footer('shop');
 ?>

@@ -6,7 +6,7 @@ Version: 1.0
 Author: jkmilo8
 */
 
-add_action('plugins_loaded', 'woocommerce_payu_latam_gateway_integration', 0);
+//add_action('plugins_loaded', 'woocommerce_payu_latam_gateway_integration', 0);
 
 function woocommerce_payu_latam_gateway_integration() {
 	if(!class_exists('WC_Payment_Gateway')) return;

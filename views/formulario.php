@@ -51,7 +51,7 @@
                                     <!-- accordion 1 Ded-Cre cards-->
                                     <div class="card">
                                         <div class="box-errors-payment-method"> 
-                                            <div class="result-message-status"> 
+                                            <div class="result-message-status-error"> 
                                                 <div> 
                                                     <div id="cc_system_error0" class="title_response_code"> 
                                                         <p>
@@ -60,7 +60,16 @@
                                                     </div>
                                                 </div>
                                                 <p class="choose-another-method">Intenta con otro medio de pago</p>
-                                            </div> 
+                                            </div>
+                                            <div class="result-message-status-success"> 
+                                                <div> 
+                                                    <div id="cc_system_success" class="title_response_code"> 
+                                                        <p>
+                                                            <span>Tu transacción ha sido exitosa.</span>
+                                                        </p> 
+                                                    </div>
+                                                </div>                                                
+                                            </div>
                                             <div>
                                                 <a class="inline-button-back" id="response_button_continue" href="#" analytics-on="click" analytics-event="GoToTheStoreSite" analytics-category="PaymentMethods">
                                                     <span> <- Regresar al sitio de la tienda</span> 

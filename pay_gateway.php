@@ -14,7 +14,7 @@ if(isset($_POST['merchantId'])){
 if(isset($_POST['referenceCode'])){
 	$referenceCode = $_POST['referenceCode'];
 } else {
-	$referenceCode = '8819';
+	$referenceCode = '8820';
 }
 
 if(isset($_POST['description'])){
@@ -209,20 +209,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 
                 if ($response_api['code'] === "SUCCESS") {
 
-                    $url_response = $url_response . 
-                    '&polResponseCode='. (isset($response_api['transactionResponse']['paymentNetworkResponseCode']) ? $response_api['transactionResponse']['paymentNetworkResponseCode'] : '5') . 
-                    '&lapResponseCode='. (isset($response_api['transactionResponse']['responseCode']) ? $response_api['transactionResponse']['responseCode'] : '') .
-                    '&risk=&polPaymentMethod=44&transactionState=6'.
+                    $url_response = $url_response .                     
+                    '&lapResponseCode='. (isset($response_api['transactionResponse']['responseCode']) ? $response_api['transactionResponse']['responseCode'] : 'DECLINED') .
+                    '&risk=&polPaymentMethod=44'.
                     '&lapTransactionState='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED').
                     '&message='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED') .
                     '&reference_pol='. (isset($response_api['transactionResponse']['orderId']) ? $response_api['transactionResponse']['orderId'] : '') .
-                    '&transactionId='. (isset($response_api['transactionResponse']['transactionId']) ? $response_api['transactionResponse']['transactionId'] : '') .
-                    '&polTransactionState=6';
+                    '&transactionId='. (isset($response_api['transactionResponse']['transactionId']) ? $response_api['transactionResponse']['transactionId'] : '');
 
                     if ($response_api['transactionResponse']['state'] === "APPROVED") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
+
+                        $url_response = $url_response .  
+                        '&polResponseCode=1' . 
+                        '&transactionState=4'.
+                        '&polTransactionState=4';
+
                         $response = [
                             'status' => 'ok',
                             'message' => 'APPROVED',
@@ -233,6 +237,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
 
+                        $url_response = $url_response .  
+                        '&polResponseCode=9944' . 
+                        '&transactionState=12'.
+                        '&polTransactionState=12';
+
                         $response = [
                             'status' => 'ok',
                             'message' => 'PENDING',
@@ -240,6 +249,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                             'url' => $response_api['transactionResponse']['extraParameters']['BANK_URL']
                         ];  
                     } else {
+
+                        $url_response = $url_response .  
+                        '&polResponseCode=5' . 
+                        '&transactionState=6'.
+                        '&polTransactionState=6';
 
                         $response = [
                             'status' => 'error',

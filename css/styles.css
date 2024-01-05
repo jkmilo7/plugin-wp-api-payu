@@ -286,7 +286,7 @@
     border-radius: .25rem;
 }
 
-.result-message-status{
+.result-message-status-error{
   background-image: none;
   padding: 8px 25px;
   background-color: #ee0000;  
@@ -300,12 +300,30 @@
   margin-bottom: 24px;
   color: white;
   font-size: 12px;
+  display: none;
 }
 
 .title_response_code {
   text-align: center;
   font-size: x-large;
   font-weight: bold;
+}
+
+.result-message-status-success{
+  background-image: none;
+  padding: 8px 25px;
+  background-color: green;  
+  overflow: hidden;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  margin-top: 12px;
+  margin-bottom: 24px;
+  color: white;
+  font-size: 12px;
+  display: none;
 }
 
 .choose-another-method {
@@ -325,6 +343,6 @@
     background-color: transparent;
 }
 
-.box-errors-payment-method {
+.box-errors-payment-method{
   display: none;
 }

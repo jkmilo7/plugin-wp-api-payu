@@ -24,9 +24,11 @@ var Payment = function(){
             success: function (res) {                
 
                 if (res.status === "ok") {
-                    showSuccessNotification("Procesando correctamente: " + res.message);
-                    
-					$('.box-errors-payment-method').hide();
+                    showSuccessNotification("Procesando correctamente: " + res.message);                    
+					$('.result-message-status-success').show();
+					$('.result-message-status-error').hide();
+					$('.inline-button-back').attr('href', res.responseUrl);
+					$('.inline-button-back').focus();
 
 					if(openUrl)
 					{
@@ -35,20 +37,24 @@ var Payment = function(){
 					}					
                 } else {
                     showErrorNotification("Error: " + res.message);
+					$('.result-message-status-error').show();
+					$('.result-message-status-success').hide();
 					$('.inline-button-back').attr('href', res.responseUrl);
-					$('.inline-button-back').focus();					
-					$('.box-errors-payment-method').show();					
+					$('.inline-button-back').focus();
+					
                 }
             },
             error: function (res, a) {
 				
 	            showErrorNotification("Error: " + res.message);
-				$('.box-errors-payment-method').show();
+				$('.result-message-status-error').show();
+				$('.result-message-status-success').hide();
 
             },
             complete: function () {
                 // Ocultar el indicador de carga cuando la petición esté completa (ya sea éxito o error)
-                hideLoading();
+                $('.box-errors-payment-method').show();
+				hideLoading();				
             }
         });
     };

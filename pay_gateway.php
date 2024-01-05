@@ -3,7 +3,7 @@
 require_once './api_payu_payment_gateway.php';
 require_once './controllers/ApiController.php';
 require_once './utils/Order.php';
-//get_header('shop');
+// get_header('shop');
 
 if(isset($_POST['merchantId'])){
 	$merchantId = $_POST['merchantId'];
@@ -14,7 +14,7 @@ if(isset($_POST['merchantId'])){
 if(isset($_POST['referenceCode'])){
 	$referenceCode = $_POST['referenceCode'];
 } else {
-	$referenceCode = '8807';
+	$referenceCode = '8819';
 }
 
 if(isset($_POST['description'])){
@@ -80,14 +80,14 @@ if(isset($_POST['test'])){
 if(isset($_POST['confirmationUrl'])){
 	$confirmationUrl = $_POST['confirmationUrl'];
 } else {
-    $confirmationUrl = 'http://localhost:65357/confirmation.php';
+    $confirmationUrl = 'http://localhost:63287/confirmation.php';
 	//$confirmationUrl = 'https://www.espacolaser.com.co/wp-content/plugins/woocommerce-intregrate-with-api-payu/confirmation.php';
 }
 
 if(isset($_POST['responseUrl'])){
 	$responseUrl = $_POST['responseUrl'];
 } else {
-    $responseUrl = 'http://localhost:65357/response.php';;
+    $responseUrl = 'http://localhost:63287/response.php';;
 	//$responseUrl = 'https://www.espacolaser.com.co/wp-content/plugins/woocommerce-intregrate-with-api-payu/response.php';;
 }
 
@@ -132,6 +132,8 @@ if(isset($_POST['cellPhone'])){
 } else {
 	$cellPhone = '3202701111';
 }
+
+$currentDate = date("Y-m-d");
 
 
 //Obtenemos el apiKey y el ApiLogin
@@ -191,38 +193,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 $cellPhone = $_POST['creditcard_cell_phone'];
                 $paymentMethod = $_POST['creditcard_payment_method'];
                 
+                $url_response = $responseUrl . '?merchantId=' . $merchantId .
+                '&merchant_name=CORP%C3%93REOS+COLOMBIA+S.A.S&merchant_address=KR+11++84++09+LC+3&telephone=7429660&merchant_url=https%3A%2F%2Fwww.espacolaser.com.co%2F' . 
+                '&referenceCode='. $order->getReference() .
+                '&description=' . $order->getDescription() .
+                '&trazabilityCode=&cus=&orderLanguage='. $language .'&extra1=WOOCOMMERCE&extra2=&extra3=' . 
+                '&signature=' . $signature .
+                '&lapPaymentMethod='. $paymentMethod .'&polPaymentMethodType=2&lapPaymentMethodType=CREDIT_CARD&installmentsNumber='. $fees . 
+                '&TX_VALUE='. $order->getAmount() .'&TX_TAX='. $order-> getTax() .'&currency='. $currency .
+                '&lng='. $language .'&pseCycle=&buyerEmail='. $buyerEmail .'&pseBank=&pseReference1=&pseReference2=&pseReference3=&authorizationCode='.
+                '&TX_ADMINISTRATIVE_FEE=.00&TX_TAX_ADMINISTRATIVE_FEE=.00&TX_TAX_ADMINISTRATIVE_FEE_RETURN_BASE='. $order-> getTaxReturnBase() .
+                '&processingDate=' . $currentDate;
+
                 $response_api = json_decode($apiController->setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $paymentMethod, $order, $signature, $session, $ip, $userAgent, $shippingCountry), true);
                 
-				// Redireccionar a response.php con los datos de la transacción
-				//header('Location: ' . $responseUrl. '?merchantId=508029&transactionId=&transactionState=6&polResponseCode=4&reference_pol=&referenceCode=8757&pseBank=&cus=&TX_VALUE=9900.00&currency=COP&description=%20Promoción%20Paquete%20Depilación%20Láser%20Áxilas%20Para%20Mujer&lapPaymentMethod=VISA&signature=0a81a36ef18f9b51b83aa613e3c31108&mensaje=Ya%20seproceso%20la%20peticion');
-
-                //echo '<script>window.location.href = "'.$responseUrl.'?merchantId=508029&transactionId=&transactionState=6&polResponseCode=4&reference_pol=&referenceCode=8757&pseBank=&cus=&TX_VALUE=9900.00&currency=COP&description=%20Promoción%20Paquete%20Depilación%20Láser%20Áxilas%20Para%20Mujer&lapPaymentMethod=VISA&signature=0a81a36ef18f9b51b83aa613e3c31108&mensaje=Ya%20seproceso%20la%20peticion";</script>';
-
-                // Incluir la vista
-                require_once 'response.php';
-
-				// Asegúrate de terminar la ejecución aquí
-				//exit;
-
                 if ($response_api['code'] === "SUCCESS") {
+
+                    $url_response = $url_response . 
+                    '&polResponseCode='. (isset($response_api['transactionResponse']['paymentNetworkResponseCode']) ? $response_api['transactionResponse']['paymentNetworkResponseCode'] : '5') . 
+                    '&lapResponseCode='. (isset($response_api['transactionResponse']['responseCode']) ? $response_api['transactionResponse']['responseCode'] : '') .
+                    '&risk=&polPaymentMethod=44&transactionState=6'.
+                    '&lapTransactionState='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED').
+                    '&message='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED') .
+                    '&reference_pol='. (isset($response_api['transactionResponse']['orderId']) ? $response_api['transactionResponse']['orderId'] : '') .
+                    '&transactionId='. (isset($response_api['transactionResponse']['transactionId']) ? $response_api['transactionResponse']['transactionId'] : '') .
+                    '&polTransactionState=6';
+
                     if ($response_api['transactionResponse']['state'] === "APPROVED") {
                         
-                        $order->setPayuOrderId($resporesponse_apinse['transactionResponse']['orderId']);
+                        $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
                         $response = [
-                            'status' =>     'ok',
-                            'message' => 'APPROVED'
+                            'status' => 'ok',
+                            'message' => 'APPROVED',
+                            'responseUrl' => $url_response
                         ];
+                    } else if ($response_api['transactionResponse']['state'] === "PENDING") {
+                        
+                        $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
+                        $order->setTransactionId($response_api['transactionResponse']['transactionId']);
+
+                        $response = [
+                            'status' => 'ok',
+                            'message' => 'PENDING',
+                            'responseUrl' => $url_response,
+                            'url' => $response_api['transactionResponse']['extraParameters']['BANK_URL']
+                        ];  
                     } else {
+
                         $response = [
                             'status' => 'error',
-                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode']
+                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode'] . " / " . $response_api['transactionResponse']['paymentNetworkResponseErrorMessage'],
+                            'responseUrl' => $url_response
                         ];  
                     }
                 } else {                    
                     $response["status"] = "error";
                     $response["message"] = $response_api['error'];
-                }               
+                }
                 
             break;
             case '/pay_gateway.php/pse-payment':
@@ -427,5 +455,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     // Incluir la vista
     require_once 'views/formulario.php';
 
-//get_footer('shop');
+// get_footer('shop');
 ?>

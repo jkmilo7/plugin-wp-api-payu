@@ -106,7 +106,7 @@ class ApiController {
         }
     }
 
-    public function setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $paymentMethod, $order, $signature, $session, $ip, $userAgent) 
+    public function setCreditCardPaymentAPI($payerName, $typeDocument, $documentNumber, $creditCardNumber, $cvv, $monthExp, $yearExp, $fees, $cellPhone, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $paymentMethod, $order, $signature, $session, $ip, $userAgent, $country) 
     {
         try {
 

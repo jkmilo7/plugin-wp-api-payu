@@ -49,29 +49,70 @@
                             <div class="col-12">
                                 <div id="accordion">
                                     <!-- accordion 1 Ded-Cre cards-->
-                                    <div class="card" data-toggle="collapse" data-target="#collapseOne"
-                                        aria-expanded="true" aria-controls="collapseOne">
-                                        <div class="card-header" id="headingOne">
-                                            <h5 class="mb-0">
-                                                Tarjeta de crédito o débito
-                                                <img src=".\img\tarvisa.png" alt="Visa" class="img-fluid img-card">
-                                                <img src=".\img\tarmaster.png" alt="Mastercard"
-                                                    class=".\img-fluid img-card">
-                                                <img src=".\img\taramex.png" alt="American Express"
-                                                    class=".\img-fluid img-card">
-                                                <img src=".\img\tardiners.png" alt="Dinners" class="img-fluid img-card">
-                                                <img src=".\img\tarcodensa.png" alt="Codensa" class="img-fluid img-card">
-                                            </h5>
+                                    <div class="card">
+                                        <div class="box-errors-payment-method"> 
+                                            <div class="result-message-status"> 
+                                                <div> 
+                                                    <div id="cc_system_error0" class="title_response_code"> 
+                                                        <p>
+                                                            <span>Tu transacción ha sido rechazada.</span>
+                                                        </p> 
+                                                    </div>
+                                                </div>
+                                                <p class="choose-another-method">Intenta con otro medio de pago</p>
+                                            </div> 
+                                            <div>
+                                                <a class="inline-button-back" id="response_button_continue" href="#" analytics-on="click" analytics-event="GoToTheStoreSite" analytics-category="PaymentMethods">
+                                                    <span> <- Regresar al sitio de la tienda</span> 
+                                                </a>
+                                            </div>
                                         </div>
-
+                                        <div class="row card-header" id="headingOne">
+                                            <div class="col-xs-12 col-sm-3">
+                                                <h5 class="mb-0">
+                                                    Tarjeta de crédito o débito
+                                                </h5>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="desktop-img visa" alt="Visa" data-toggle="collapse" data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                    <button type="button" onclick="updatePaymentMethod('VISA')">
+                                                        <span class="visually-hidden">Visa</span>
+                                                    </button>
+                                                </div>
+                                                <div class="desktop-img mastercard" alt="Mastercard" data-toggle="collapse" data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                    <button type="button" onclick="updatePaymentMethod('MASTERCARD')">
+                                                        <span class="visually-hidden">Mastercard</span>
+                                                    </button>
+                                                </div>
+                                                <div class="desktop-img amex" alt="American Express" data-toggle="collapse" data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                    <button type="button" onclick="updatePaymentMethod('AMEX')">
+                                                        <span class="visually-hidden">American Express</span>
+                                                    </button>
+                                                </div>
+                                                <div class="desktop-img diners" alt="Diners" data-toggle="collapse" data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                    <button type="button" onclick="updatePaymentMethod('DINERS')">
+                                                        <span class="visually-hidden">Diners</span>
+                                                    </button>
+                                                </div>
+                                                <div class="desktop-img codensa" alt="Codensa" data-toggle="collapse" data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                                    <button type="button" onclick="updatePaymentMethod('CODENSA')">
+                                                        <span class="visually-hidden">Codensa</span>
+                                                    </button>
+                                                </div>
+                                            </div>                                            
+                                        </div>
                                         <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
                                             data-parent="#accordion">
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-md-8 mx-auto">
-
                                                         <form id="creditcard-form">
-                                                        <input type="hidden" id="creditcard_payment_method" name="creditcard_payment_method" value="VISA">
+                                                            <input type="hidden" id="creditcard_payment_method" name="creditcard_payment_method" value="VISA">
                                                             <div class="form-group">
                                                                 <label for="creditcard_payer_name">Nombre en la Tarjeta *:</label>
                                                                 <input type="text" id="creditcard_payer_name"
@@ -95,7 +136,7 @@
                                                                     <label for="creditcard_document_number">Número de
                                                                         Documento *:</label>
                                                                     <input type="text" id="creditcard_document_number"
-                                                                        name="creditcard_document_number" class="form-control"
+                                                                        name="creditcard_document_number" class="form-control"                                                                        
                                                                         required>
                                                                 </div>
                                                             </div>
@@ -110,8 +151,8 @@
                                                             <div class="form-row">
                                                                 <div class="form-group col-md-4">
                                                                     <label for="cvv"
-                                                                        class="inline-label">Código CVV/CVC *</label>
-                                                                    <input type="text" id="cvv"
+                                                                        class="inline-label">CVV/CVC *</label>
+                                                                    <input type="password" id="cvv"
                                                                         name="cvv" class="form-control"
                                                                         placeholder="000" required>
                                                                 </div>
@@ -122,10 +163,8 @@
                                                                         <div class="col">
                                                                             <select id="month_exp"
                                                                                 name="month_exp"
-                                                                                class="form-control" required>
-                                                                                <option value="" disabled selected>Mes
-                                                                                </option>
-                                                                                <option value="01">01</option>
+                                                                                class="form-control" required>                                                                            
+                                                                                <option value="01" selected>01</option>
                                                                                 <option value="02">02</option>
                                                                                 <option value="02">03</option>
                                                                                 <option value="02">04</option>
@@ -152,14 +191,16 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="form-group">
-                                                                <label for="fees">Cuotas *:</label>
-                                                                <select id="fees" name="fees" class="form-control col-md-3">
-                                                                <?php foreach ($fees as $fee): ?>
-                                                                    <option value="<?php echo $fee; ?>"><?php echo $fee; ?></option>
-                                                                <?php endforeach; ?>                                                                    
-                                                                </select>
-                                                            </div>
+                                                            <div class="form-row">                                                                
+                                                                <div class="form-group col-md-6">
+                                                                    <label for="fees">Cuotas *:</label>
+                                                                    <select id="fees" name="fees" class="form-control col-md-6">
+                                                                    <?php foreach ($fees as $fee): ?>
+                                                                        <option value="<?php echo $fee; ?>"><?php echo $fee; ?></option>
+                                                                    <?php endforeach; ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>                                                            
 
                                                             <div class="form-row">
                                                                 <div class="form-group col-md-9">
@@ -176,8 +217,7 @@
                                                                             class="form-control" required placeholder="Ej: 3112222222">
                                                                     </div>
                                                                 </div>
-                                                            </div>
-
+                                                            </div>                                                            
                                                             <div class="form-group form-check">
                                                                 <input type="checkbox" class="form-check-input"
                                                                     id="creditcard_politicaDatos" required>
@@ -198,14 +238,21 @@
                                     </div>
 
                                     <!-- accordion 2 PSE-->
-                                    <div class="card" data-toggle="collapse" data-target="#collapseTwo"
-                                        aria-expanded="false" aria-controls="collapseTwo">
-                                        <div class="card-header" id="headingTwo">
-                                            <h5 class="mb-0">
-                                                Débito Bancario PSE
-                                                <img src=".\img\pse.png" alt="Visa" class="img-fluid img-card">
-
-                                            </h5>
+                                    <div class="card">
+                                        <div class="row card-header" id="headingTwo">
+                                            <div class="col-xs-12 col-sm-3">
+                                                <h5 class="mb-0">
+                                                    Débito Bancario PSE
+                                                </h5>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-2">
+                                                <div class="desktop-img pse" alt="PSE" data-toggle="collapse" data-target="#collapseTwo"
+                                                aria-expanded="false" aria-controls="collapseTwo">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6">
+                                                <p class="pse-text">Recuerda verificar el monto máximo que tienes habilitado para pagos por internet.</p>
+                                            </div>
                                         </div>
                                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                                             data-parent="#accordion">
@@ -317,25 +364,66 @@
                                         </div>
                                     </div>
 
-                                    <!-- accordion Efectivo -->
-                                    <div class="card" data-toggle="collapse" data-target="#collapseThree"
-                                        aria-expanded="false" aria-controls="collapseThree">
-                                        <div class="card-header" id="headingThree">
-                                            <h5 class="mb-0">
-                                                Pago en Efectivo
-                                                <img src=".\img\pagatodo.png" alt="pagatodo" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\apuestascucuta.png" alt="Cucuta"
-                                                    class=".\img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\gana.png" alt="gana" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\ganagana.png" alt="gana gana" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\suchance.png" alt="suchance" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\acertamos.png" alt="acertamos" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\laperla.png" alt="laperla" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\apuestasunidas.png" alt="apuestasunidas"
-                                                    class=".\img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\jer.png" alt="jer" class="img-fluid img-card" data-value="OTHERS_CASH">
-                                                <img src=".\img\efecty.png" alt="efecty" class="img-fluid img-card" data-value="EFECTY">
-                                            </h5>
+                                    <!-- accordion 3 Efectivo -->
+                                    <div class="card">
+                                        <div class="row card-header" id="headingThree">
+                                            <div class="col-xs-12 col-sm-3">
+                                                <h5 class="mb-0">
+                                                    Pago en Efectivo
+                                                </h5>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="money-table pagatodo" alt="pagatodo" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table cucuta" alt="Cucuta" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table gana" alt="gana" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table gana-gana" alt="gana gana" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table suchance" alt="suchance" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table acertamos" alt="acertamos" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table laperla" alt="laperla" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table apuestasunidas" alt="apuestasunidas" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table jer" alt="jer" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('OTHERS_CASH')">
+                                                        <span class="visually-hidden">OTHERS_CASH</span>
+                                                    </button>
+                                                </div>
+                                                <div class="money-table efecty" alt="efecty" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <button type="button" onclick="updatePaymentMethodCash('EFECTY')">
+                                                        <span class="visually-hidden">EFECTY</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                             data-parent="#accordion">
@@ -457,18 +545,21 @@
                                     </div>
 
                                     <!-- accordion Banks -->
-                                    <div class="card" data-toggle="collapse" data-target="#collapseFour"
-                                        aria-expanded="false" aria-controls="collapseFour">
-                                        <div class="card-header" id="headingFour">
-                                            <h5 class="mb-0">
-                                                Pago en Bancos
-                                                <img src=".\img\bogota.png" alt="bogota" class="img-fluid img-card-bank">
-                                                <img src=".\img\bancolombia.png" alt="bancolombia"
-                                                    class=".\img-fluid img-card-bank">
-                                                <img src=".\img\davivienda.png" alt="davivienda"
-                                                    class=".\img-fluid img-card-bank">
-
-                                            </h5>
+                                    <div class="card">
+                                        <div class="row card-header" id="headingFour">
+                                            <div class="col-xs-12 col-sm-3">
+                                                <h5 class="mb-0">
+                                                    Pago en Bancos
+                                                </h5>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <div class="table-img bank-bogota" alt="bogota" data-toggle="collapse" data-target="#collapseFour"
+                                                aria-expanded="false" aria-controls="collapseFour"></div>
+                                                <div class="table-img bancolombia" alt="bancolombia" data-toggle="collapse" data-target="#collapseFour"
+                                                aria-expanded="false" aria-controls="collapseFour"></div>
+                                                <div class="table-img bank-davivienda" alt="davivienda" data-toggle="collapse" data-target="#collapseFour"
+                                                aria-expanded="false" aria-controls="collapseFour"></div>
+                                            </div>
                                         </div>
                                         <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
                                             data-parent="#accordion">
@@ -568,7 +659,7 @@
                     </p>
                 </div>
             </div>
-        </div>
+        </div>        
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -596,74 +687,6 @@
             e.stopPropagation();
         });
        
-        function validateCreditCard() {
-            var cardNumber = document.getElementById('credit_card_number').value.replace(/\s/g, ''); // Elimina espacios en blanco
-            var cvv = document.getElementById('cvv').value;
-            var monthExp = document.getElementById('month_exp').value;
-            var yearExp = document.getElementById('year_exp').value;
-
-            if (!isValidCreditCardNumber(cardNumber)) {
-                alert('Número de tarjeta no válido');
-                return;
-            }
-
-            if (!isValidCVV(cvv)) {
-                alert('CVV no válido');
-                return;
-            }
-
-            if (!isValidExpirationDate(monthExp, yearExp)) {
-                alert('Fecha de vencimiento no válida');
-                return;
-            }
-
-            // Aquí puedes enviar el formulario o realizar otras acciones si la tarjeta es válida
-            alert('Tarjeta válida. Puedes proceder.');
-        }
-
-        function isValidCreditCardNumber(cardNumber) {
-            // Implementa el algoritmo de Luhn para validar el número de tarjeta
-            // Devuelve true si es válido, false si no lo es
-            // ...
-
-            // Ejemplo simple de validación de Luhn:
-            var sum = 0;
-            var isSecondDigit = false;
-
-            for (var i = cardNumber.length - 1; i >= 0; i--) {
-                var digit = parseInt(cardNumber.charAt(i), 10);
-
-                if (isSecondDigit) {
-                    digit *= 2;
-                    if (digit > 9) {
-                        digit -= 9;
-                    }
-                }
-
-                sum += digit;
-                isSecondDigit = !isSecondDigit;
-            }
-
-            return sum % 10 === 0;
-        }
-
-        function isValidCVV(cvv) {
-            // Implementa tus propias reglas de validación para el CVV
-            // Devuelve true si es válido, false si no lo es
-            // Por ejemplo, puedes requerir que el CVV tenga una longitud específica
-            return /^[0-9]{3,4}$/.test(cvv);
-        }
-
-        function isValidExpirationDate(month, year) {
-            // Implementa tus propias reglas de validación para la fecha de vencimiento
-            // Devuelve true si es válida, false si no lo es
-            // Por ejemplo, puedes verificar que la fecha sea futura
-            // ...
-
-            // Ejemplo simple: verifica que el mes sea un número y el año sea un número de 4 dígitos
-            return !isNaN(parseInt(month, 10)) && !isNaN(parseInt(year, 10)) && year.length === 4;
-        }
-
     </script>
 </body>
 </html>

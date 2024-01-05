@@ -26,6 +26,8 @@ var Payment = function(){
                 if (res.status === "ok") {
                     showSuccessNotification("Procesando correctamente: " + res.message);
                     
+					$('.box-errors-payment-method').hide();
+
 					if(openUrl)
 					{
 						// Abre una nueva pestaña con la URL proporcionada
@@ -33,11 +35,15 @@ var Payment = function(){
 					}					
                 } else {
                     showErrorNotification("Error: " + res.message);
+					$('.inline-button-back').attr('href', res.responseUrl);
+					$('.inline-button-back').focus();					
+					$('.box-errors-payment-method').show();					
                 }
             },
             error: function (res, a) {
 				
 	            showErrorNotification("Error: " + res.message);
+				$('.box-errors-payment-method').show();
 
             },
             complete: function () {
@@ -54,10 +60,32 @@ var Payment = function(){
 			for (var i = 0; i < formElements.length; i++) {
 				if (!formElements[i].checkValidity()) {
 					// Mostrar el mensaje de error si el campo no es válido
+					showErrorNotification("Faltan campos por digitar.")
 					formElements[i].reportValidity();
 					return; // Detener la ejecución si algún campo no es válido
 				}
 			}
+
+			 // Validar número de teléfono			 
+			 if (!validateCellPhone("creditcard_cell_phone")) {
+				return; 
+			}
+
+			 // Validar número de cvv
+			 if (!validateCVV) {
+				 return; 
+			 }
+
+			 // Validar número de tarjeta de credito
+			 if (!validateCreditCard) {
+				return; 
+			}
+
+			// Validar nombre de la tarjeta de credito
+			if (!validateOnlyText("creditcard_payer_name")) {
+				return; 
+			}
+
             var formData = $formCreditcard.serialize();
             makePaymentRequest('pay_gateway.php/creditcard-payment', formData, false);
         },
@@ -112,8 +140,133 @@ var Payment = function(){
     };
 }();
 
-document.getElementById('payment_method_cash').addEventListener('change', function() {
-	var paymentMethod = this.value;
+      
+function validateOnlyText(inputId) {
+    var text = document.getElementById(inputId).value;
+    var regex = /^[a-zA-Z\s]+$/;
+
+    if (!regex.test(text)) {
+		showInputError(inputId, "Ingresa sólo texto, sin números ni caracteres especiales");        
+        document.getElementById(inputId).focus();
+        return false;
+    }
+
+	removeError(inputId);
+    return true;
+}
+
+function validateOnlyNumber(inputId) {
+	var text = document.getElementById(inputId).value;
+	var regex = /^[0-9]+$/;
+
+	if (!regex.test(text)) {
+		showInputError(inputId, "Ingresa sólo números, sin texto ni caracteres especiales");
+		document.getElementById(inputId).focus();
+		return false;
+	}
+
+	removeError(inputId);
+	return true;
+}
+
+
+function validateCreditCard() {
+
+	var creditCardInput = document.getElementById('credit_card_number');
+	var creditCardValue = creditCardInput.value.replace(/\s/g, ''); // Elimina espacios en blanco
+
+	if (!isValidCreditCardNumber(creditCardValue)) {
+		showInputError('credit_card_number', "Número de tarjeta inválido");		
+		creditCardInput.focus();
+		return false;        
+    }
+
+	removeError('credit_card_number');
+	return true;
+}
+
+function validateCVV() {
+
+	var cvvInput = document.getElementById('cvv');
+	var cvvValue = cvvInput.value.replace(/\s/g, ''); // Elimina espacios en blanco
+
+	if (!isValidCVV(cvvValue)) {
+		showInputError('cvv', "El código de seguridad de la tarjeta de crédito debe ser de 3 dígitos");				
+		cvvInput.focus();
+		return false;
+    }
+
+	removeError('cvv');
+	return true;
+}
+
+function validateCellPhone(inputId) {
+
+	var cpInput = document.getElementById(inputId);
+	var cpValue = cpInput.value.replace(/\s/g, ''); // Elimina espacios en blanco
+
+	if (!isValidPhoneNumber(cpValue)) {
+		showInputError(inputId, "Ingresa el número de teléfono valido del dueño de la tarjeta de crédito");		
+		cpInput.focus();
+		return false;
+    }
+
+	removeError(inputId);
+	return true;
+}
+
+function isValidCreditCardNumber(cardNumber) {
+	
+	// Validación  basada en el algoritmo de Luhn:
+	var sum = 0;
+	var isSecondDigit = false;
+
+	for (var i = cardNumber.length - 1; i >= 0; i--) {
+		var digit = parseInt(cardNumber.charAt(i), 10);
+
+		if (isSecondDigit) {
+			digit *= 2;
+			if (digit > 9) {
+				digit -= 9;
+			}
+		}
+
+		sum += digit;
+		isSecondDigit = !isSecondDigit;
+	}
+
+	return sum % 10 === 0;
+}
+
+function isValidCVV(cvv) {	
+	return /^[0-9]{3}$/.test(cvv);
+}
+
+function isValidPhoneNumber(phoneNumber) { 
+    return /^[0-9]{10}$/.test(phoneNumber);
+}
+
+document.getElementById("creditcard_payer_name").addEventListener("blur", function() {
+    validateOnlyText("creditcard_payer_name");
+});
+
+document.getElementById("credit_card_number").addEventListener("blur",  validateCreditCard);
+
+document.getElementById("cvv").addEventListener("blur",  validateCVV);
+
+document.getElementById("creditcard_cell_phone").addEventListener("blur", function() {
+    validateCellPhone("creditcard_cell_phone");
+});
+
+function updatePaymentMethod(paymentMethod) {
+
+	document.getElementById('creditcard_payment_method').value = paymentMethod;
+}
+
+function updatePaymentMethodCash(paymentMethod) {
+
+	document.getElementById('payment_method_cash').value = paymentMethod;
+
 	var cashInstructions = document.getElementById('cash-instructions');
 	var efectyInstructions = document.getElementById('efecty-instructions');
 
@@ -124,32 +277,37 @@ document.getElementById('payment_method_cash').addEventListener('change', functi
 		cashInstructions.style.display = 'block';
 		efectyInstructions.style.display = 'none';
 	}
-});
+}
 
-document.addEventListener('DOMContentLoaded', function () {
-    var images = document.querySelectorAll('.img-card');
-    var cashInstructions = document.getElementById('cash-instructions');
-    var efectyInstructions = document.getElementById('efecty-instructions');
-    var paymentMethodHiddenInput = document.getElementById('payment_method_cash');
 
-    images.forEach(function (image) {
-        image.addEventListener('click', function () {
-            var paymentMethod = image.getAttribute('data-value');
+function showInputError(inputId, errorMessage) {
+    var inputElement = document.getElementById(inputId);
+    var errorElementId = inputId + '_error';
 
-            // Establece el valor en el input hidden
-            paymentMethodHiddenInput.value = paymentMethod;
+    // Verifica si ya hay un mensaje de error y lo elimina
+    var existingErrorElement = document.getElementById(errorElementId);
+    if (existingErrorElement) {
+        existingErrorElement.parentNode.removeChild(existingErrorElement);
+    }
 
-            // Ajusta las instrucciones de acuerdo al método de pago seleccionado
-            if (paymentMethod === 'EFECTY') {
-                cashInstructions.style.display = 'none';
-                efectyInstructions.style.display = 'block';
-            } else {
-                cashInstructions.style.display = 'block';
-                efectyInstructions.style.display = 'none';
-            }
-        });
-    });
-});
+    // Crea un elemento de error y lo agrega después del campo de entrada
+    var errorElement = document.createElement('span');
+    errorElement.id = errorElementId;
+    errorElement.className = 'error-message';
+    errorElement.innerHTML = errorMessage;
+
+    inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+}
+
+function removeError(inputId) {
+    var errorElementId = inputId + '_error';
+    var existingErrorElement = document.getElementById(errorElementId);
+
+    // Verifica si hay un mensaje de error y lo elimina
+    if (existingErrorElement) {
+        existingErrorElement.parentNode.removeChild(existingErrorElement);
+    }
+}
 
 // Mostrar el indicador de carga
 function showLoading() {

@@ -24,24 +24,42 @@ var Payment = function(){
             success: function (res) {                
 
                 if (res.status === "ok") {
-                    showSuccessNotification("Procesando correctamente: " + res.message);                    
-					$('.result-message-status-success').show();
-					$('.result-message-status-error').hide();
-					$('.inline-button-back').attr('href', res.responseUrl);
-					$('.inline-button-back').focus();
+
+					showSuccessNotification("Procesando correctamente: " + res.message);
+
+					if( res.message === "PENDING")
+					{
+						var nuevaReferencia = "555555555";
+        				var mensaje = "En este momento su referencia de pago # " + nuevaReferencia + " presenta un proceso de pago cuya transacción se encuentra PENDIENTE de recibir confirmación por parte de su entidad financiera, por favor espere unos minutos y vuelva a consultar más tarde para verificar si su pago fue confirmado de forma exitosa. Si desea mayor información sobre el estado actual de su operación puede comunicarse a nuestras líneas de atención al cliente 7429660 o enviar un correo electrónico a lina.caicedo@espacolaser.com.co y preguntar por el estado de la transacción: " + nuevaReferencia;
+
+        				$('.pending-message').text(mensaje);
+						$('.result-message-status-info').show();
+						$('.result-message-status-success').hide();						
+						$('.result-message-status-error').hide();
+						$('.inline-button-back').attr('href', res.responseUrl);
+						$('.inline-button-back').focus();
+					}
+					else
+					{						
+						$('.result-message-status-success').show();
+						$('.result-message-status-info').hide();
+						$('.result-message-status-error').hide();
+						$('.inline-button-back').attr('href', res.responseUrl);
+						$('.inline-button-back').focus();
+					}
 
 					if(openUrl)
 					{
 						// Abre una nueva pestaña con la URL proporcionada
-						window.open(res.url, '_blank');
+						window.open(res.url, '_top');
 					}					
                 } else {
                     showErrorNotification("Error: " + res.message);
 					$('.result-message-status-error').show();
 					$('.result-message-status-success').hide();
+					$('.result-message-status-info').hide();
 					$('.inline-button-back').attr('href', res.responseUrl);
-					$('.inline-button-back').focus();
-					
+					$('.inline-button-back').focus();					
                 }
             },
             error: function (res, a) {
@@ -49,6 +67,7 @@ var Payment = function(){
 	            showErrorNotification("Error: " + res.message);
 				$('.result-message-status-error').show();
 				$('.result-message-status-success').hide();
+				$('.result-message-status-info').hide();
 
             },
             complete: function () {
@@ -95,12 +114,13 @@ var Payment = function(){
             var formData = $formCreditcard.serialize();
             makePaymentRequest('pay_gateway.php/creditcard-payment', formData, false);
         },
-        pse: function () {
+        pse: function (clickedButton) {
 			var formElements = $formPSE[0].elements;		
 			// Verificar la validez de los campos del formulario
 			for (var i = 0; i < formElements.length; i++) {
 				if (!formElements[i].checkValidity()) {
 					// Mostrar el mensaje de error si el campo no es válido
+					showErrorNotification("Faltan campos por digitar.")
 					formElements[i].reportValidity();
 					return; // Detener la ejecución si algún campo no es válido
 				}
@@ -110,12 +130,29 @@ var Payment = function(){
 
             // Validar que se haya seleccionado una opción diferente de 0
             if (selectedBankValue === "0") {
-                showErrorNotification("Por favor, selecciona un banco válido.");
+				showInputError("pse_bank", "Selecciona el banco al que pertenece la cuenta bancaria");
                 return;
             }
 
+			var selectedTypePerson = document.getElementById("pse_type_person").value;
+
+            // Validar que se haya seleccionado una opción diferente de 0
+            if (selectedTypePerson === "") {
+				showInputError("pse_type_person", "Selecciona el tipo de cliente titular de la cuenta bancaria.");
+                return;
+            }
+
+			if (!validateOnlyText("pse_payer_name")) {
+				return; 
+			}
+
+			if (!validateCellPhone("pse_cell_phone")) {
+				return; 
+			}
+
             var formData = $formPSE.serialize();
             makePaymentRequest('pay_gateway.php/pse-payment', formData, true);
+			clickedButton.disabled = true;
         },
         cash: function () {
 			var formElements = $formCash[0].elements;		
@@ -262,6 +299,14 @@ document.getElementById("cvv").addEventListener("blur",  validateCVV);
 
 document.getElementById("creditcard_cell_phone").addEventListener("blur", function() {
     validateCellPhone("creditcard_cell_phone");
+});
+
+document.getElementById("pse_payer_name").addEventListener("blur", function() {
+    validateOnlyText("pse_payer_name");
+});
+
+document.getElementById("pse_cell_phone").addEventListener("blur", function() {
+    validateCellPhone("pse_cell_phone");
 });
 
 function updatePaymentMethod(paymentMethod) {

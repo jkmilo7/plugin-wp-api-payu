@@ -13,8 +13,10 @@ class ApiController {
     private $language;
     private $test;
     private $currency;
+    private $responseUrl;
+    private $confirmUrl;
 
-    public function __construct(ApiModel $apiModel, $apiLogin, $apiKey, $accountId, $merchantId, $country, $language, $test, $currency) {
+    public function __construct(ApiModel $apiModel, $apiLogin, $apiKey, $accountId, $merchantId, $country, $language, $test, $currency, $responseUrl, $confirmUrl) {
         $this->apiModel = $apiModel;
         $this->apiLogin = $apiLogin;
         $this->apiKey = $apiKey;
@@ -23,7 +25,9 @@ class ApiController {
         $this->country = $country;
         $this->language = $language;
         $this->test = $test;
-        $this->currency = $currency;        
+        $this->currency = $currency;
+        $this->responseUrl = $responseUrl;
+        $this->confirmUrl = $confirmUrl;
     }
 
     public function setEnvironment($environment) {
@@ -124,7 +128,7 @@ class ApiController {
                         'description' => $order->getDescription(),
                         'language' => $this->language,
                         'signature' => $signature,
-                        //'notifyUrl' => 'http://www.payu.com/notify',
+                        'notifyUrl' => $this-> confirmUrl,
                         'additionalValues' => array(
                             'TX_VALUE' => array(
                                 'value' => $order->getAmount(),
@@ -226,7 +230,7 @@ class ApiController {
                         'description' => $order->getDescription(),
                         'language' => $this->language,
                         'signature' => $signature,
-                        //'notifyUrl' => 'http://www.payu.com/notify',
+                        'notifyUrl' => $this-> confirmUrl,
                         'additionalValues' => array(
                             'TX_VALUE' => array(
                                 'value' => $order->getAmount(),
@@ -275,7 +279,7 @@ class ApiController {
                         )
                     ),                    
                     'extraParameters' => array(
-                        'RESPONSE_URL' => 'http://localhost:65357/response',
+                        'RESPONSE_URL' => $this-> responseUrl,
                         'PSE_REFERENCE1' => $ip,
                         'FINANCIAL_INSTITUTION_CODE' => ( $this->test === 'true') ? '1022' : $bank,
                         'USER_TYPE' => $typePerson,
@@ -320,7 +324,7 @@ class ApiController {
                         'description' => $order->getDescription(),
                         'language' => $this->language,
                         'signature' => $signature,
-                        //'notifyUrl' => 'http://localhost:52975/',
+                        'notifyUrl' => $this-> confirmUrl,
                         'additionalValues' => array(
                             'TX_VALUE' => array(
                                 'value' => $order->getAmount(),

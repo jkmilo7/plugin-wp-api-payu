@@ -70,6 +70,16 @@
                                                     </div>
                                                 </div>                                                
                                             </div>
+                                            <div class="result-message-status-info">
+                                                <div> 
+                                                    <div id="cc_system_info" class="title_response_code"> 
+                                                        <p>
+                                                            <span>Tu transacción esta pendiente.</span>                                                            
+                                                        </p> 
+                                                    </div>
+                                                </div>
+                                                <p class="pending-message">En este momento su referencia de pago # 2948336929 presenta un proceso de pago cuya transacción se encuentra PENDIENTE de recibir confirmación por parte de su entidad financiera, por favor espere unos minutos y vuelva a consultar más tarde para verificar si su pago fue confirmado de forma exitosa. Si desea mayor información sobre el estado actual de su operación puede comunicarse a nuestras líneas de atención al cliente 7429660 o enviar un correo electrónico a lina.caicedo@espacolaser.com.co y preguntar por el estado de la transacción: 380048321</p> 
+                                            </div>
                                             <div>
                                                 <a class="inline-button-back" id="response_button_continue" href="#" analytics-on="click" analytics-event="GoToTheStoreSite" analytics-category="PaymentMethods">
                                                     <span> <- Regresar al sitio de la tienda</span> 
@@ -363,7 +373,7 @@
                                                                     de datos personales</label>
                                                     </div>
                                                     <div class="col-md-8 mx-auto">
-                                                        <button type="button" onclick="Payment.pse()" class="btn btn-primary">
+                                                        <button type="button" onclick="Payment.pse(this)" class="btn btn-primary">
                                                             Pagar <i class="fas fa-arrow-right"></i>
                                                         </button>
                                                     </div>

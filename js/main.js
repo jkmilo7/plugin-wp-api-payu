@@ -160,10 +160,16 @@ var Payment = function(){
 			for (var i = 0; i < formElements.length; i++) {
 				if (!formElements[i].checkValidity()) {
 					// Mostrar el mensaje de error si el campo no es válido
+					showErrorNotification("Faltan campos por digitar.")
 					formElements[i].reportValidity();
 					return; // Detener la ejecución si algún campo no es válido
 				}
 			}
+
+			if (!validateOnlyText("cash_payer_name")) {
+				return; 
+			}
+
             var formData = $formCash.serialize();
             makePaymentRequest('pay_gateway.php/cash-payment', formData, true);
         },
@@ -173,10 +179,16 @@ var Payment = function(){
 			for (var i = 0; i < formElements.length; i++) {
 				if (!formElements[i].checkValidity()) {
 					// Mostrar el mensaje de error si el campo no es válido
+					showErrorNotification("Faltan campos por digitar.")
 					formElements[i].reportValidity();
 					return; // Detener la ejecución si algún campo no es válido
 				}
 			}
+
+			if (!validateOnlyText("bank_payer_name")) {
+				return; 
+			}
+			
             var formData = $formBanks.serialize();
             makePaymentRequest('pay_gateway.php/banks-payment', formData, true);
         }
@@ -307,6 +319,14 @@ document.getElementById("pse_payer_name").addEventListener("blur", function() {
 
 document.getElementById("pse_cell_phone").addEventListener("blur", function() {
     validateCellPhone("pse_cell_phone");
+});
+
+document.getElementById("cash_payer_name").addEventListener("blur", function() {
+    validateOnlyText("cash_payer_name");
+});
+
+document.getElementById("bank_payer_name").addEventListener("blur", function() {
+    validateOnlyText("bank_payer_name");
 });
 
 function updatePaymentMethod(paymentMethod) {

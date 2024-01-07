@@ -14,7 +14,7 @@ if(isset($_POST['merchantId'])){
 if(isset($_POST['referenceCode'])){
 	$referenceCode = $_POST['referenceCode'];
 } else {
-	$referenceCode = '8825';
+	$referenceCode = '8828';
 }
 
 if(isset($_POST['description'])){
@@ -380,40 +380,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                         ];                        
                         break;
                     }
-                }                
+                }
+
+                $url_response = $responseUrl . '?merchantId=' . $merchantId .
+                '&merchant_name=CORP%C3%93REOS+COLOMBIA+S.A.S&merchant_address=KR+11++84++09+LC+3&telephone=7429660&merchant_url=https%3A%2F%2Fwww.espacolaser.com.co%2F' . 
+                '&referenceCode='. $order->getReference() .
+                '&description=' . $order->getDescription() .
+                '&trazabilityCode=&cus=&orderLanguage='. $language .'&extra1=WOOCOMMERCE&extra2=&extra3=' . 
+                '&signature=' . $signature .
+                '&lapPaymentMethod=CASH&polPaymentMethodType=7&lapPaymentMethodType=CASH&installmentsNumber='. 
+                '&TX_VALUE='. $order->getAmount() .'&TX_TAX='. $order-> getTax() .'&currency='. $currency .
+                '&lng='. $language .'&pseCycle=&buyerEmail='. $buyerEmail .'&pseBank=&pseReference1=&pseReference2=&pseReference3=&authorizationCode='.
+                '&TX_ADMINISTRATIVE_FEE=.00&TX_TAX_ADMINISTRATIVE_FEE=.00&TX_TAX_ADMINISTRATIVE_FEE_RETURN_BASE='. $order-> getTaxReturnBase() .
+                '&processingDate=' . $currentDate;
 
                 $response_api = json_decode($apiController->setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent, $cellPhone), true);
                 
-                if ($response_api['code'] === "SUCCESS") {                    
+                if ($response_api['code'] === "SUCCESS") {
+
+                    $url_response = $url_response .                     
+                    '&lapResponseCode='. (isset($response_api['transactionResponse']['responseCode']) ? $response_api['transactionResponse']['responseCode'] : 'DECLINED') .
+                    '&risk=&polPaymentMethod=44'.
+                    '&lapTransactionState='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED').
+                    '&message='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED') .
+                    '&reference_pol='. (isset($response_api['transactionResponse']['orderId']) ? $response_api['transactionResponse']['orderId'] : '') .
+                    '&transactionId='. (isset($response_api['transactionResponse']['transactionId']) ? $response_api['transactionResponse']['transactionId'] : '');
+
                     if ($response_api['transactionResponse']['state'] === "APPROVED") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
-                        $response = [
-                            'status' =>  'ok',
-                            'message' => 'APPROVED'
-                        ];
 
+                        $url_response = $url_response .  
+                        '&polResponseCode=1' . 
+                        '&transactionState=4'.
+                        '&polTransactionState=4';
+
+                        $response = [
+                            'status' => 'ok',
+                            'message' => 'APPROVED',
+                            'responseUrl' => $url_response
+                        ];
                     } else if ($response_api['transactionResponse']['state'] === "PENDING") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
 
+                        $url_response = $url_response .  
+                        '&polResponseCode=9944' . 
+                        '&transactionState=12'.
+                        '&polTransactionState=12';
+
                         $response = [
                             'status' => 'ok',
-                            'message' => 'PENDING ',
-                            'url' => $response_api['transactionResponse']['extraParameters']['URL_PAYMENT_RECEIPT_HTML']
-                        ]; 
+                            'message' => 'PENDING',
+                            'responseUrl' => $url_response,
+                            'url' => $response_api['transactionResponse']['extraParameters']['BANK_URL']
+                        ];  
                     } else {
+
+                        $url_response = $url_response .  
+                        '&polResponseCode=5' . 
+                        '&transactionState=6'.
+                        '&polTransactionState=6';
+
                         $response = [
                             'status' => 'error',
-                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode']
-                        ];                        
+                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode'] . " / " . $response_api['transactionResponse']['paymentNetworkResponseErrorMessage'],
+                            'responseUrl' => $url_response
+                        ];  
                     }
                 } else {                    
                     $response["status"] = "error";
                     $response["message"] = $response_api['error'];
-                    
                 }
 
             break;
@@ -425,41 +464,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 $documentNumber = $_POST['bank_document_number'];
                 $paymentMethod = $_POST['payment_method_banks'];
    
+                $url_response = $responseUrl . '?merchantId=' . $merchantId .
+                '&merchant_name=CORP%C3%93REOS+COLOMBIA+S.A.S&merchant_address=KR+11++84++09+LC+3&telephone=7429660&merchant_url=https%3A%2F%2Fwww.espacolaser.com.co%2F' . 
+                '&referenceCode='. $order->getReference() .
+                '&description=' . $order->getDescription() .
+                '&trazabilityCode=&cus=&orderLanguage='. $language .'&extra1=WOOCOMMERCE&extra2=&extra3=' . 
+                '&signature=' . $signature .
+                '&lapPaymentMethod=BANK_REFERENCED&polPaymentMethodType=10&lapPaymentMethodType=BANK_REFERENCED&installmentsNumber='. 
+                '&TX_VALUE='. $order->getAmount() .'&TX_TAX='. $order-> getTax() .'&currency='. $currency .
+                '&lng='. $language .'&pseCycle=&buyerEmail='. $buyerEmail .'&pseBank=&pseReference1=&pseReference2=&pseReference3=&authorizationCode='.
+                '&TX_ADMINISTRATIVE_FEE=.00&TX_TAX_ADMINISTRATIVE_FEE=.00&TX_TAX_ADMINISTRATIVE_FEE_RETURN_BASE='. $order-> getTaxReturnBase() .
+                '&processingDate=' . $currentDate;
+
                 $response_api = json_decode($apiController->setCashOrBankPaymentAPI($payerName, $typeDocument, $documentNumber, $paymentMethod, $buyerEmail, $shippingAddress, $shippingCountry, $shippingCity, $billingAddress, $billingCountry, $billingCity, $order, $signature, $session, $ip, $userAgent, $cellPhone), true);
 
                 if ($response_api['code'] === "SUCCESS") {
-                    
+
+                    $url_response = $url_response .                     
+                    '&lapResponseCode='. (isset($response_api['transactionResponse']['responseCode']) ? $response_api['transactionResponse']['responseCode'] : 'DECLINED') .
+                    '&risk=&polPaymentMethod=44'.
+                    '&lapTransactionState='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED').
+                    '&message='. (isset($response_api['transactionResponse']['state']) ? $response_api['transactionResponse']['state'] : 'DECLINED') .
+                    '&reference_pol='. (isset($response_api['transactionResponse']['orderId']) ? $response_api['transactionResponse']['orderId'] : '') .
+                    '&transactionId='. (isset($response_api['transactionResponse']['transactionId']) ? $response_api['transactionResponse']['transactionId'] : '');
+
                     if ($response_api['transactionResponse']['state'] === "APPROVED") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
+
+                        $url_response = $url_response .  
+                        '&polResponseCode=1' . 
+                        '&transactionState=4'.
+                        '&polTransactionState=4';
+
                         $response = [
-                            'status' =>  'ok',
-                            'message' => 'APPROVED'
+                            'status' => 'ok',
+                            'message' => 'APPROVED',
+                            'responseUrl' => $url_response
                         ];
-                        
                     } else if ($response_api['transactionResponse']['state'] === "PENDING") {
                         
                         $order->setPayuOrderId($response_api['transactionResponse']['orderId']);
                         $order->setTransactionId($response_api['transactionResponse']['transactionId']);
 
+                        $url_response = $url_response .  
+                        '&polResponseCode=9944' . 
+                        '&transactionState=12'.
+                        '&polTransactionState=12';
+
                         $response = [
                             'status' => 'ok',
-                            'message' => 'PENDING ',
-                            'url' => $response_api['transactionResponse']['extraParameters']['URL_PAYMENT_RECEIPT_HTML']
+                            'message' => 'PENDING',
+                            'responseUrl' => $url_response,
+                            'url' => $response_api['transactionResponse']['extraParameters']['BANK_URL']
                         ];  
-                        
                     } else {
+
+                        $url_response = $url_response .  
+                        '&polResponseCode=5' . 
+                        '&transactionState=6'.
+                        '&polTransactionState=6';
+
                         $response = [
                             'status' => 'error',
-                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode']
+                            'message' => 'DECLINED ' . $response_api['transactionResponse']['responseCode'] . " / " . $response_api['transactionResponse']['paymentNetworkResponseErrorMessage'],
+                            'responseUrl' => $url_response
                         ];  
-                        
                     }
                 } else {                    
                     $response["status"] = "error";
-                    $response["message"] = $response_api['error'];                    
-                }               
+                    $response["message"] = $response_api['error'];
+                }
                 
             break;
         }

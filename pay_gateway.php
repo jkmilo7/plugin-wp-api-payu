@@ -1,9 +1,9 @@
 <?php
-// require_once '../../../wp-blog-header.php';
+require_once '../../../wp-blog-header.php';
 require_once './api_payu_payment_gateway.php';
 require_once './controllers/ApiController.php';
 require_once './utils/Order.php';
-// get_header('shop');
+get_header('shop');
 
 if(isset($_POST['merchantId'])){
 	$merchantId = $_POST['merchantId'];
@@ -80,15 +80,15 @@ if(isset($_POST['test'])){
 if(isset($_POST['confirmationUrl'])){
 	$confirmationUrl = $_POST['confirmationUrl'];
 } else {
-    $confirmationUrl = 'http://localhost:63572/confirmation.php';
-	//$confirmationUrl = 'https://www.espacolaser.com.co/wp-content/plugins/woocommerce-intregrate-with-api-payu/confirmation.php';
+    //$confirmationUrl = 'http://localhost:63572/confirmation.php';
+	$confirmationUrl = 'https://www.espacolaser.com.co/wp-content/plugins/plugin-wp-api-payu/confirmation.php';
 }
 
 if(isset($_POST['responseUrl'])){
 	$responseUrl = $_POST['responseUrl'];
 } else {
-    $responseUrl = 'http://localhost:63572/response.php';;
-	//$responseUrl = 'https://www.espacolaser.com.co/wp-content/plugins/woocommerce-intregrate-with-api-payu/response.php';;
+    //$responseUrl = 'http://localhost:63572/response.php';;
+	$responseUrl = 'https://www.espacolaser.com.co/wp-content/plugins/plugin-wp-api-payu/response.php';;
 }
 
 if(isset($_POST['shippingAddress'])){
@@ -137,12 +137,12 @@ $currentDate = date("Y-m-d");
 
 
 //Obtenemos el apiKey y el ApiLogin
-// $payu = new WC_Api_Payu_Payment_Gateway;
-//  $apiKey = $payu->get_api_key();
-//  $apiLogin = $payu->get_api_login();
+$payu = new WC_Api_Payu_Payment_Gateway;
+$apiKey = $payu->get_api_key();
+$apiLogin = $payu->get_api_login();
 
-$apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
-$apiLogin = 'pRRXKOl8ikMmt9u';
+// $apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
+// $apiLogin = 'pRRXKOl8ikMmt9u';
 
 if(isset($_POST['signature'])){
 	$signature = $_POST['signature'];
@@ -587,5 +587,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     // Incluir la vista
     require_once 'views/formulario.php';
 
-// get_footer('shop');
+get_footer('shop');
 ?>

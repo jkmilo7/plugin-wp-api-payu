@@ -2,11 +2,11 @@
 /*
 Plugin Name: Api PAYU Payment Gateway
 Description: Un gateway de pago personalizado para integracion del API PAYU con WooCommerce.
-Version: 1.0
+Version: 2.0
 Author: jkmilo8
 */
 
-//add_action('plugins_loaded', 'woocommerce_payu_latam_gateway_integration', 0);
+add_action('plugins_loaded', 'woocommerce_payu_latam_gateway_integration', 0);
 
 function woocommerce_payu_latam_gateway_integration() {
 	if(!class_exists('WC_Payment_Gateway')) return;

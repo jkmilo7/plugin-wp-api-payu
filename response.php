@@ -1,7 +1,7 @@
 <?php
-// require_once '../../../wp-blog-header.php';
+require_once '../../../wp-blog-header.php';
 require_once './api_payu_payment_gateway.php';
-// get_header('shop');
+get_header('shop');
 
 if(isset($_REQUEST['signature'])){
 	$signature = $_REQUEST['signature'];
@@ -37,12 +37,12 @@ if(isset($_REQUEST['transactionState'])){
 
 $value = number_format($value, 1, '.', '');
 
-// $payu = new WC_Api_Payu_Payment_Gateway;
-// $api_key = $payu->get_api_key();
-$apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
-// $signature_local = $api_key . '~' . $merchantId . '~' . $referenceCode . '~' . $value . '~' . $currency . '~' . $transactionState;
-// $signature_md5 = md5($signature_local);
-$signature_md5 = $signature;
+$payu = new WC_Api_Payu_Payment_Gateway;
+$api_key = $payu->get_api_key();
+//$apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
+$signature_local = $api_key . '~' . $merchantId . '~' . $referenceCode . '~' . $value . '~' . $currency . '~' . $transactionState;
+$signature_md5 = md5($signature_local);
+//$signature_md5 = $signature;
 
 if(isset($_REQUEST['polResponseCode'])){
 	$polResponseCode = $_REQUEST['polResponseCode'];
@@ -51,7 +51,7 @@ if(isset($_REQUEST['polResponseCode'])){
 }
 
 $agradecimiento = '';
-// $order = new WC_Order($referenceCode);
+$order = new WC_Order($referenceCode);
 if($transactionState == 6 && $polResponseCode == 5){
 	$estadoTx = "Transacci&oacute;n fallida";
 } else if($transactionState == 6 && $polResponseCode == 4){
@@ -179,7 +179,7 @@ if (strtoupper($signature) == strtoupper($signature_md5)) {
 } else {
 	echo '<h1><center>La petici&oacute;n es incorrecta! Hay un error en la firma digital.</center></h1>';
 }
-// get_footer('shop');
+get_footer('shop');
 ?>
 
 <script>
